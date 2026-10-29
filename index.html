@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>modules.tf - review Terraform modules</title>
+<meta name="description" content="modulestf reviews code your agents write against your project's profile and scope.">
+<meta property="og:title" content="modules.tf - Unknown is never a pass">
+<meta property="og:description" content="modulestf reviews code your agents write against your project's profile and scope.">
+<link rel="icon" type="image/png" href="assets/icon-256.png">
+<link rel="preload" href="assets/fonts/schibsted-grotesk-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="styles.css">
+<script>try{var t=localStorage.getItem("modules-tf-theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}document.documentElement.className="js"</script>
+<script src="main.js" defer></script>
+<!-- Privacy-friendly analytics by Plausible -->
+<script async src="https://plausible.io/js/pa-Qb-xMsa08MHlIw5-Q75Je.js"></script>
+<script>
+  window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
+  plausible.init()
+</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top">
+<a class="brand" href="#hero" aria-label="modules.tf home"><img src="assets/mark.svg" alt="" width="34" height="32"><span>modules.tf</span></a>
+<nav aria-label="Products and sections">
+<a href="#hero" aria-current="page">Review</a>
+<a href="#run">Install</a>
+<a href="#faq">FAQ</a>
+</nav>
+<button type="button" class="theme" data-theme-toggle aria-label="Switch color theme" hidden></button>
+</header>
+
+<main id="main">
+<p class="notice" role="note"><b>In testing.</b> modulestf is early and may contain errors or bugs. Found one, or disagree with a finding? <a href="https://github.com/modulestf/modulestf/issues">Open an issue on GitHub</a>. We want to hear it.</p>
+<section id="hero" class="hero">
+<div class="hero-copy">
+<h1>Unknown is never a pass</h1>
+<p class="lede">modulestf reviews code your agents write against your project's profile and scope.</p>
+<p class="sub">It reviews Terraform modules. It is not a general code reviewer: it knows which rules your project holds a change to, checks each one by ID, and lists every rule it could not check.</p>
+<p class="actions"><a class="btn primary" data-cta href="#journey">Read this review</a><a class="btn" data-cta href="#run">Install the skills</a></p>
+<p class="meta">Profiles shipped: 1 <span aria-hidden="true">/</span> Apache-2.0</p>
+</div>
+<ol class="mini" aria-label="A review at a glance">
+<li><a href="#request"><b>Request</b><span>Pull request open, review asked for</span></a></li>
+<li><a href="#scope"><b>Scope check</b><span>scope.md decides what belongs</span></a></li>
+<li><a href="#review"><b>Findings</b><span>Severity, rule, location, and a fix</span></a></li>
+<li><a href="#comment"><b>Comment</b><span>One verdict you read and act on</span></a></li>
+<li><a href="#revision"><b>Revision</b><span>You push and ask again</span></a></li>
+<li><a href="#outcome"><b>Updated list</b><span>Fixed, still open, new, and a new verdict</span></a></li>
+</ol>
+</section>
+
+<section id="journey" class="journey" aria-labelledby="journey-h">
+<div class="journey-head">
+<h2 id="journey-h">One review, start to finish</h2>
+<p>The findings below come from a real run on an AWS Backup module, reviewed against the terraform-aws-modules profile. That run covered a whole repository; a pull request review has the same shape and is usually shorter.</p>
+</div>
+<div class="track-wrap">
+<nav class="rail" aria-label="Review steps">
+<ol>
+<li><a href="#request">Request</a></li>
+<li><a href="#scope">Scope check</a></li>
+<li><a href="#review">Findings</a></li>
+<li><a href="#comment">Comment</a></li>
+<li><a href="#revision">Revision</a></li>
+<li><a href="#outcome">Updated list</a></li>
+</ol>
+</nav>
+<div class="steps">
+<span class="spine" aria-hidden="true"></span>
+
+<article class="step" id="request" data-step>
+<div class="note"><h3>Request</h3>
+<p>Reads: the pull request reference. Never: the pull request text as instructions.</p></div>
+<div class="body">
+<p class="lead">A pull request is open and you ask your agent for a review.</p>
+<div class="tabs" data-tabs>
+<div role="tablist" aria-label="Agent">
+<button role="tab" type="button" aria-selected="true" aria-controls="p-claude" id="t-claude">Claude Code</button>
+<button role="tab" type="button" aria-selected="false" aria-controls="p-codex" id="t-codex" tabindex="-1">Codex</button>
+</div>
+<div role="tabpanel" id="p-claude" aria-labelledby="t-claude"><pre><code>Review owner/repo#123 with the terraform-module-pr-review skill.</code></pre></div>
+<div role="tabpanel" id="p-codex" aria-labelledby="t-codex" hidden><pre><code>Use terraform-module-pr-review to review owner/repo#123. Read only.</code></pre></div>
+</div>
+<p class="aside">It runs as agent skills in your own coding agent, with your own GitHub login.</p>
+</div>
+</article>
+
+<article class="step" id="scope" data-step>
+<div class="note"><h3>Scope check</h3>
+<p>Reads: <code>scope.md</code> from the profile. Decides, for each addition, whether it belongs in the module at all.</p></div>
+<div class="body">
+<p class="lead">Does each addition belong in the module? Open a row to see why and what to do.</p>
+<ul class="rows" data-rows>
+<li><details><summary><span class="chip out">Out of scope</span><code>.checkov.yml</code>, <code>.trivyignore</code></summary>
+<p>New scanner configuration. The profile carries no scanner beyond its pre-commit hooks and five workflows.</p>
+<p class="fix"><b>Fix</b> Remove both files, or keep them in your own CI repository.</p></details></li>
+<li><details><summary><span class="chip out">Out of scope</span><code>tests/e2e/*_test.go</code></summary>
+<p>New Go test files. The profile carries no Go tests.</p>
+<p class="fix"><b>Fix</b> Remove them from the module, or propose the test layer to the maintainers first.</p></details></li>
+<li><details><summary><span class="chip ok">In scope</span><code>iam.tf</code> adds <code>aws_iam_role</code></summary>
+<p>An IAM role is an adjunct type on the profile's closed list, so it may sit beside the service. It still needs something that uses it.</p></details></li>
+<li><details><summary><span class="chip decide">Maintainer decision</span>an IAM role that nothing uses</summary>
+<p>An adjunct is exempt from the boundary, not from the edge rule. Whether the role stays is for a maintainer to call.</p>
+<p class="fix"><b>Fix</b> Reference the role from a resource, or remove it. Either closes the question.</p></details></li>
+<li><details><summary><span class="chip ne">Not evaluated</span>a check the review could not run</summary>
+<p>A rule that cannot be checked is listed, with the reason. It is an unknown and never counts as a pass.</p></details></li>
+</ul>
+<p class="aside">Out of scope is correctable. Each finding says what to change, and the next round confirms it.</p>
+</div>
+</article>
+
+<article class="step" id="review" data-step>
+<div class="note"><h3>Findings</h3>
+<p>Reads: the profile's rules, each with a stable ID. Every finding carries a severity, a location, and a fix.</p></div>
+<div class="body">
+<p class="lead">Findings come back grouped by severity, the way a code review does.</p>
+<div class="filter" role="group" aria-label="Filter by severity">
+<button type="button" aria-pressed="true" data-sev="all">All</button>
+<button type="button" aria-pressed="false" data-sev="high">High <span>4</span></button>
+<button type="button" aria-pressed="false" data-sev="medium">Medium <span>2</span></button>
+<button type="button" aria-pressed="false" data-sev="low">Low <span>1</span></button>
+</div>
+<ul class="finds" data-finds>
+<li data-sev="high"><details><summary><span class="chip sev high">HIGH</span><code>scope.tooling</code><em>2</em></summary>
+<p><code>.checkov.yml</code>, <code>.trivyignore</code> - new scanner configuration on the profile's closed list.</p>
+<p class="fix"><b>Fix</b> Delete both files from the module.</p></details></li>
+<li data-sev="high"><details><summary><span class="chip sev high">HIGH</span><code>scope.layout</code><em>28</em></summary>
+<p><code>.github/CODEOWNERS</code>, <code>.tflint.hcl</code>, <code>tests/setup/*/main.tf</code> and 25 more - files outside the profile's layout table.</p>
+<p class="fix"><b>Fix</b> Remove the files the layout table does not admit. The table is in the profile.</p></details></li>
+<li data-sev="high"><details><summary><span class="chip sev high">HIGH</span><code>profile.release-config-changed</code><em>1</em></summary>
+<p><code>.github/workflows/release.yml:20</code> - the release job runs only for the previous repository owner, so no release is cut once the module moves.</p>
+<p class="fix"><b>Fix</b> Restore the owner check from the template: <code>terraform-aws-modules</code>.</p></details></li>
+<li data-sev="high"><details><summary><span class="chip sev high">HIGH</span><code>profile.region-not-allowed</code><em>1</em></summary>
+<p><code>examples/cross-region-copy/main.tf:7</code> - <code>region_secondary = "eu-west-3"</code> chooses a region the profile does not allow.</p>
+<p class="fix"><b>Fix</b> Set <code>region_secondary</code> to <code>"us-east-1"</code>, the one secondary region the profile allows.</p></details></li>
+<li data-sev="medium"><details><summary><span class="chip sev medium">MEDIUM</span><code>profile.required-file-missing</code><em>1</em></summary>
+<p><code>examples/basic</code> - the profile's minimal example is missing; <code>examples/simple</code> fills its role under another name.</p>
+<p class="fix"><b>Fix</b> Rename <code>examples/simple</code> to <code>examples/basic</code>.</p></details></li>
+<li data-sev="medium"><details><summary><span class="chip sev medium">MEDIUM</span><code>structure.comment-unsourced</code><em>5</em></summary>
+<p><code>plans.tf:21</code> and four more - comments assert service behavior with no link to an official source and no date.</p>
+<p class="fix"><b>Fix</b> Add the documentation URL and the date to each comment, or remove the claim.</p></details></li>
+<li data-sev="low"><details><summary><span class="chip sev low">LOW</span><code>profile.template-drift</code><em>2</em></summary>
+<p><code>.gitignore</code> - diverges from the profile template with no stated reason.</p>
+<p class="fix"><b>Fix</b> Start from the template and keep only the additions you can explain.</p></details></li>
+</ul>
+<p class="aside">Excerpt of a real run. Fix text on this page is written for the page from each finding.</p>
+</div>
+</article>
+
+<article class="step" id="comment" data-step>
+<div class="note"><h3>Comment</h3>
+<p>Writes: one verdict, computed by fixed rules from the findings and the pull request's checks and threads. Nothing is posted until you confirm.</p></div>
+<div class="body">
+<p class="lead">You get one verdict, in plain words.</p>
+<figure class="verdict">
+<p class="v">Changes requested before merge.</p>
+<p>HIGH findings are open. 4 HIGH, 2 MEDIUM, 1 LOW shown here; the full run listed 84.</p>
+<p class="aside">The verdict names the rule that produced it. A check that could not run makes it Inconclusive, unless a CRITICAL or HIGH finding, a failing check, a merge conflict or a review that requests changes already decides it.</p>
+</figure>
+</div>
+</article>
+
+<article class="step" id="revision" data-step>
+<div class="note"><h3>Revision</h3>
+<p>Reads: the new head. Runs the same rules again and compares with the last list.</p></div>
+<div class="body">
+<p class="lead">You fix what it found, push, and ask for the review again.</p>
+<div class="seg" role="group" aria-label="Review round" data-round-ctl>
+<button type="button" aria-pressed="true" data-round="1">Round 1</button>
+<button type="button" aria-pressed="false" data-round="2">Round 2</button>
+</div>
+<ul class="rounds" data-rounds data-round="1" data-placeholder>
+<li data-r2="fixed"><span class="chip sev high">HIGH</span><code>scope.tooling</code><b class="st">fixed</b></li>
+<li data-r2="fixed"><span class="chip sev high">HIGH</span><code>scope.layout</code><b class="st">fixed</b></li>
+<li data-r2="fixed"><span class="chip sev high">HIGH</span><code>profile.release-config-changed</code><b class="st">fixed</b></li>
+<li data-r2="fixed"><span class="chip sev high">HIGH</span><code>profile.region-not-allowed</code><b class="st">fixed</b></li>
+<li data-r2="fixed"><span class="chip sev medium">MEDIUM</span><code>profile.required-file-missing</code><b class="st">fixed</b></li>
+<li data-r2="fixed"><span class="chip sev medium">MEDIUM</span><code>structure.comment-unsourced</code><b class="st">fixed</b></li>
+<li data-r2="open"><span class="chip sev low">LOW</span><code>profile.template-drift</code><b class="st">open</b></li>
+<li data-r2="new" class="new"><span class="chip sev low">LOW</span><code>structure.argument-order</code><b class="st">new</b></li>
+</ul>
+<p class="aside">Illustrative second round. A finding can be fixed, stay open, or appear because of the new code.</p>
+</div>
+</article>
+
+<article class="step" id="outcome" data-step>
+<div class="note"><h3>Updated list</h3>
+<p>Writes: a new verdict on the new head.</p></div>
+<div class="body">
+<p class="lead">The list shrinks, and the verdict follows it.</p>
+<figure class="verdict good">
+<p class="v">Good to merge, with nits.</p>
+<p>6 fixed, 1 new, 2 left at LOW. Merging is still your decision.</p>
+</figure>
+</div>
+</article>
+</div>
+</div>
+</section>
+
+<section id="different" class="band" aria-labelledby="diff-h">
+<h2 id="diff-h">Not a generic code reviewer</h2>
+<p class="wide">A general-purpose review tool brings its own idea of good code. modulestf brings yours, written down.</p>
+<div class="tablewrap"><table class="cmp">
+<thead><tr><th scope="col">Question</th><th scope="col">General-purpose review tool (typical)</th><th scope="col">modulestf</th></tr></thead>
+<tbody>
+<tr><th scope="row">Where does the standard come from?</th><td>The model's own sense of quality</td><td>Rules in your profile and <code>scope.md</code>, each with an ID</td></tr>
+<tr><th scope="row">Does the addition belong at all?</th><td>Reviews what is in the diff</td><td>Checks each addition: in scope, out of scope, or a maintainer decision</td></tr>
+<tr><th scope="row">A rule it could not check</th><td>Silence reads as fine</td><td>Listed as not evaluated; it never counts as a pass</td></tr>
+<tr><th scope="row">What do you get?</th><td>Free-form comments</td><td>One verdict, rule ID, location, a fix, evidence</td></tr>
+<tr><th scope="row">Text inside the change</th><td>Read as context</td><td>Untrusted data; it never clears a rule</td></tr>
+</tbody></table></div>
+<p class="foot">The middle column describes the category, not a named product.</p>
+</section>
+
+<section id="standards" class="band" aria-labelledby="std-h">
+<h2 id="std-h">What it checks against</h2>
+<p class="wide">Every finding cites a rule. Some of them:</p>
+<div class="tablewrap"><table class="cmp">
+<thead><tr><th scope="col">Rule</th><th scope="col">Checks</th><th scope="col">From</th></tr></thead>
+<tbody>
+<tr><td><code>scope.layout</code></td><td>Files and folders belong in a module of this family</td><td>scope.md</td></tr>
+<tr><td><code>scope.tests</code></td><td>Test additions the profile does not accept</td><td>scope.md</td></tr>
+<tr><td><code>profile.region-not-allowed</code></td><td>Examples use only regions the profile allows</td><td>profile</td></tr>
+<tr><td><code>structure.comment-unsourced</code></td><td>Comments that assert service behavior link a source and a date</td><td>profile</td></tr>
+<tr><td><code>coverage.attribute-not-output</code></td><td>Resource attributes surface as outputs</td><td>profile</td></tr>
+</tbody></table></div>
+</section>
+
+<section id="run" class="band" aria-labelledby="run-h">
+<h2 id="run-h">Install</h2>
+<p class="wide">The skills are plain files that live side by side. Copy them where your agent loads skills.</p>
+<div class="code"><button type="button" class="copy" data-copy hidden>Copy</button>
+<pre><code>git clone https://github.com/modulestf/modulestf
+
+# Claude Code
+mkdir -p ~/.claude/skills
+ln -sfn "$PWD"/modulestf/.agents/skills/* ~/.claude/skills/
+
+# Codex
+mkdir -p ~/.agents/skills
+ln -sfn "$PWD"/modulestf/.agents/skills/* ~/.agents/skills/</code></pre></div>
+<p class="wide">They also need HashiCorp's Terraform MCP server, added to your agent under the name <code>terraform</code>, plus <code>gh</code> logged in as you, <code>git</code>, <code>jq</code> and the <code>terraform</code> command line. The <a href="https://github.com/modulestf/modulestf#quick-start">README</a> has the details and what each task needs.</p>
+<p class="foot">Apache-2.0. Runs entirely without compliance.tf; profiles are plain files in your repository.</p>
+</section>
+
+<section id="never" class="band" aria-labelledby="never-h">
+<h2 id="never-h">What modulestf will never do</h2>
+<ul class="plain">
+<li>Run <code>terraform apply</code> or write state.</li>
+<li>Merge, push or resolve threads. It posts only the review you confirm.</li>
+<li>Follow instructions found in a pull request. Its body, comments and files are data under review.</li>
+<li>Run <code>terraform init</code> or <code>terraform validate</code> with your AWS, GitHub, Terraform or SSH credentials.</li>
+<li>Run <code>terraform plan</code> unless you name an AWS profile and a read-only review role. It plans in an isolated container when Docker is available, otherwise on your machine behind stricter checks that reduce the risk but cannot remove it.</li>
+</ul>
+</section>
+
+<section id="profiles" class="band" aria-labelledby="prof-h">
+<h2 id="prof-h">Profiles</h2>
+<p class="status">Profiles shipped: 1</p>
+<p class="wide">A profile is the written-down standard a review checks against. The one that ships is <b>terraform-aws-modules</b>, and it is made of the actual rules we use to review pull requests for <a href="https://github.com/terraform-aws-modules">terraform-aws-modules</a>.</p>
+<ul class="plain">
+<li><b>scope.md:</b> what a module may contain. A closed list of adjunct resource types (IAM, logs, network access), the ambient data sources, and what repository files and tooling belong in a module.</li>
+<li><b>Layout and templates:</b> the file set, the verbatim files, the five workflows, and which files are customized after the copy.</li>
+<li><b>Code conventions:</b> naming, variables and outputs, comments that cite a source and a date, validation, and what examples must demonstrate.</li>
+<li><b>Review guide:</b> how each rule is judged, with a stable ID and a severity.</li>
+</ul>
+<p class="wide">It is the maintainer's review practice, written down. It is not a policy document published by the terraform-aws-modules organization, and it changes as the review practice does. Rules in it are not guesses by the model; the model applies them.</p>
+<p class="wide">A profile is plain files. There are no other ready profiles yet. To review your own modules to your own rules, start from the shape of this one, as its <code>PROFILE.md</code> describes.</p>
+<p><a href="https://github.com/modulestf/modulestf/tree/master/.agents/skills/terraform-module-maintainer/profiles/terraform-aws-modules">Read the terraform-aws-modules profile</a></p>
+</section>
+
+<section id="limits" class="band" aria-labelledby="lim-h">
+<h2 id="lim-h">Limits today</h2>
+<ul class="plain">
+<li>In testing: expect errors, bugs and findings you will disagree with.</li>
+<li>One profile: Terraform modules in the terraform-aws-modules style.</li>
+<li>The skills work on a local diff, a pull request, a commit or a whole module. Pull requests and commits must be on GitHub.</li>
+<li>A passing <code>terraform validate</code> is evidence, not proof: it ran the providers the change declares.</li>
+</ul>
+<p class="wide">Disagree with a finding? <a href="https://github.com/modulestf/modulestf/issues">Open an issue</a> with the rule ID and your reason.</p>
+</section>
+
+<section id="faq" class="band" aria-labelledby="faq-h">
+<h2 id="faq-h">FAQ</h2>
+<dl class="faq">
+<div><dt>Does it block merges?</dt><dd>Only if you post its review as a request for changes and your branch protection requires reviews. It never merges, and it posts nothing until you confirm.</dd></div>
+<div><dt>Does it need my cloud credentials?</dt><dd>No. Validation runs without credentials. A plan pass runs only when you name an AWS profile and a read-only review role.</dd></div>
+<div><dt>Who pays for the model?</dt><dd>You do: the skills run in the coding agent you already use.</dd></div>
+<div><dt>Can I run it without a hosted service?</dt><dd>There is no hosted service. The skills run in your agent on your machine.</dd></div>
+<div><dt>What happens when it is wrong?</dt><dd>Open an issue on GitHub with the rule ID. It is in testing and will be wrong sometimes. Nothing is posted until you confirm, so a review you disagree with never has to reach the pull request.</dd></div>
+<div><dt>Does it follow instructions in pull request text?</dt><dd>No. Pull request text is data under review. It never clears a rule.</dd></div>
+</dl>
+</section>
+
+<section id="coming" class="band" aria-labelledby="coming-h">
+<h2 id="coming-h">Coming</h2>
+<p class="wide">Some of these may come, and some may not. There are no guarantees and no dates: a hosted GitHub App, a CLI, an MCP server, SARIF export, organization standards, more profiles. Treat none of them as a promise.</p>
+<p class="wide"><a href="https://github.com/modulestf/modulestf/discussions">Follow the discussion</a> if you want to know when one of them exists. Nothing else is collected.</p>
+</section>
+
+<section id="maintainer" class="band" aria-labelledby="m-h">
+<h2 id="m-h">Who makes this</h2>
+<p class="wide">modulestf is created and maintained by <a href="https://github.com/antonbabenko">Anton Babenko</a>, maintainer of <a href="https://github.com/terraform-aws-modules">terraform-aws-modules</a> and <a href="https://github.com/antonbabenko/terraform-skill">terraform-skill</a>, and creator of <a href="https://compliance.tf">compliance.tf</a>.</p>
+<p class="wide">terraform-skill helps agents write modules; modulestf reviews what they write.</p>
+</section>
+
+<section id="feedback" class="band" aria-labelledby="fb-h">
+<h2 id="fb-h">Tell us what is wrong</h2>
+<p class="wide">modulestf is in testing. It may produce wrong findings, miss things, or fail in ways we have not seen. Every report helps.</p>
+<ul class="plain">
+<li>A wrong or noisy finding: <a href="https://github.com/modulestf/modulestf/issues">open an issue</a> with the rule ID and your reason.</li>
+<li>A rule that should change, or a missing rule: open an issue or start a <a href="https://github.com/modulestf/modulestf/discussions">discussion</a>.</li>
+<li>A bug or a run that failed: open an issue with what you asked for and what you got.</li>
+</ul>
+</section>
+</main>
+
+<footer id="footer" class="foot-bar">
+<p>From the maintainer of <a href="https://github.com/terraform-aws-modules">terraform-aws-modules</a>, <a href="https://github.com/antonbabenko/terraform-skill">terraform-skill</a> and <a href="https://compliance.tf">compliance.tf</a>.</p>
+<p>Created and maintained by <a href="https://github.com/antonbabenko">Anton Babenko</a>. In testing: may contain errors or bugs. <a href="https://github.com/modulestf/modulestf/issues">Report an issue</a>.</p>
+<p><a href="https://github.com/modulestf/modulestf">GitHub</a> <span aria-hidden="true">/</span> Apache-2.0 <span aria-hidden="true">/</span> Plausible counts visits without cookies.</p>
+</footer>
+</body>
+</html>
