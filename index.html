@@ -37,7 +37,7 @@
 <h1>Review Terraform module pull requests against written rules</h1>
 <p class="lede">Agent skills for Claude Code and Codex. They check a change to a reusable module rule by rule against the terraform-aws-modules review rules: breaking changes, provider-schema coverage, and whether each addition belongs. Every rule they could not check is listed, never counted as a pass.</p>
 <p class="actions"><a class="btn primary" data-cta href="#run">Install the skills</a><a class="btn" data-cta href="#journey">See a real review</a></p>
-<p class="meta">In testing. From the maintainer of <a href="https://github.com/terraform-aws-modules">terraform-aws-modules</a>. <span class="nw">Apache-2.0.</span></p>
+<p class="meta">From the maintainer of <a href="https://github.com/terraform-aws-modules">terraform-aws-modules</a>. <span class="nw">Apache-2.0.</span></p>
 </div>
 <figure class="verdict">
 <p class="v">Changes requested before merge.</p>
@@ -255,36 +255,33 @@
 <ul class="plain">
 <li><code>gh</code> logged in as a person</li>
 <li><code>jq</code>, <code>perl</code> and <code>terraform</code></li>
-<li>Go, to install <code>mtf-facts</code>. Without it a pull request review ends Inconclusive.</li>
+<li><code>mtf-facts</code>, from Homebrew or <code>go install</code>. Without it a pull request review ends Inconclusive.</li>
 <li><code>sandbox-exec</code> (macOS) or <code>bwrap</code> (Linux)</li>
 </ul>
 </div>
 </div>
 <div class="code"><button type="button" class="copy" data-copy hidden>Copy</button>
-<pre><code>git clone --branch v0.1.0-rc.5 https://github.com/modulestf/modulestf.git
+<pre><code># Claude Code
+/plugin marketplace add antonbabenko/agent-plugins
+/plugin install modulestf@antonbabenko
 
-# Claude Code
-mkdir -p ~/.claude/skills
-ln -sfn "$PWD"/modulestf/.agents/skills/* ~/.claude/skills/
-
-# Codex
-mkdir -p ~/.agents/skills
-ln -sfn "$PWD"/modulestf/.agents/skills/* ~/.agents/skills/
+# Codex: add the marketplace, then install modulestf from /plugins
+codex plugin marketplace add antonbabenko/agent-plugins
 
 # Pull request review
-go install github.com/modulestf/facts/cmd/mtf-facts@latest</code></pre></div>
+brew install modulestf/tap/mtf-facts</code></pre></div>
 <ul class="plain skills">
 <li><b>terraform-module-pr-review</b> reviews a pull request or a commit and proposes one verdict. Ask it to triage for a quick pass, a mode that never approves.</li>
 <li><b>terraform-module-reviewer</b> reviews a local diff, a branch or a whole module and returns findings only, no verdict. It reads committed changes only.</li>
 <li><b>terraform-module-maintainer</b> applies findings, drafts replies to review comments and upgrades a provider major version.</li>
 </ul>
-<p class="wide">The symlinks also install change-scope, which the three skills call. The <a href="https://github.com/modulestf/modulestf#quick-start">README</a> has the details and what each task needs.</p>
+<p class="wide">The plugin also installs change-scope, which the three skills call. The <a href="https://github.com/modulestf/modulestf#quick-start">README</a> has the details and what each task needs.</p>
 </section>
 
 <section id="status" class="band" aria-labelledby="status-h">
 <h2 id="status-h">Status</h2>
 <ul class="plain">
-<li>In testing: expect errors, bugs and findings you will disagree with.</li>
+<li>New: expect bugs and findings you will disagree with.</li>
 <li>Pull requests and commits must be on GitHub.</li>
 <li>A passing <code>terraform validate</code> is evidence, not proof: it ran the providers the change declares.</li>
 <li>Some of these may come, and some may not: a hosted GitHub App, a CLI, an MCP server, SARIF export, organization standards, more profiles. There are no dates; treat none of them as a promise.</li>

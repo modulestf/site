@@ -13,7 +13,7 @@ ids=(hero who journey standards different never run status faq footer)
 fixed=(
   "Review Terraform module pull requests against written rules"
   "Agent skills for Claude Code and Codex. They check a change to a reusable module rule by rule against the terraform-aws-modules review rules: breaking changes, provider-schema coverage, and whether each addition belongs. Every rule they could not check is listed, never counted as a pass."
-  "In testing. From the maintainer of terraform-aws-modules. Apache-2.0."
+  "From the maintainer of terraform-aws-modules. Apache-2.0."
   "For maintainers of reusable Terraform modules who review pull requests against the terraform-aws-modules rules, including pull requests written by other people's agents."
   "It applies one profile today: the terraform-aws-modules rules. It does not apply your internal standards; other profiles need changes to the skills and are future work."
   "Not for root configurations or live stacks."
