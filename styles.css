@@ -160,6 +160,7 @@ pre code{background:none;padding:0;color:inherit}
 .band h3{font-size:1.15rem;letter-spacing:-.015em;margin:0 0 .6rem}
 .req{display:grid;grid-template-columns:repeat(auto-fit,minmax(16rem,1fr));gap:.5rem 3rem;max-width:62rem;margin-bottom:.75rem}
 .plain.skills{margin-top:1.75rem}
+.flag{display:inline-block;font:600 .75rem/1.4 var(--sans);letter-spacing:.04em;text-transform:uppercase;color:var(--warn);border:1px solid currentColor;border-radius:.25rem;padding:0 .4rem;margin:0 .2rem;vertical-align:.1em}
 .plain{margin:0 0 1.25rem;padding-left:1.1rem;max-width:62ch}.plain li{margin-bottom:.5rem}
 .tablewrap{overflow-x:auto;margin-bottom:1.5rem}
 .cmp{width:100%;border-collapse:collapse;font-size:.98rem}

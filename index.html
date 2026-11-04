@@ -273,7 +273,7 @@ brew install modulestf/tap/mtf-facts</code></pre></div>
 <ul class="plain skills">
 <li><b>terraform-module-pr-review</b> reviews a pull request or a commit and proposes one verdict. Ask it to triage for a quick pass, a mode that never approves.</li>
 <li><b>terraform-module-reviewer</b> reviews a local diff, a branch or a whole module and returns findings only, no verdict. It reads committed changes only.</li>
-<li><b>terraform-module-maintainer</b> applies findings, drafts replies to review comments and upgrades a provider major version.</li>
+<li><b>terraform-module-maintainer</b> <span class="flag">Early preview</span> applies findings, drafts replies to review comments and upgrades a provider major version.</li>
 </ul>
 <p class="wide">The plugin also installs change-scope, which the three skills call. The <a href="https://github.com/modulestf/modulestf#quick-start">README</a> has the details and what each task needs.</p>
 </section>
@@ -282,6 +282,7 @@ brew install modulestf/tap/mtf-facts</code></pre></div>
 <h2 id="status-h">Status</h2>
 <ul class="plain">
 <li>New: expect bugs and findings you will disagree with.</li>
+<li>terraform-module-maintainer is an early preview: it has not been tested on real changes yet. Check every edit it makes.</li>
 <li>Pull requests and commits must be on GitHub.</li>
 <li>A passing <code>terraform validate</code> is evidence, not proof: it ran the providers the change declares.</li>
 <li>Some of these may come, and some may not: a hosted GitHub App, a CLI, an MCP server, SARIF export, organization standards, more profiles. There are no dates; treat none of them as a promise.</li>
