@@ -22,6 +22,29 @@
     });
   }
 
+  /* GitHub star counts: one public API call per repo, cached for an hour */
+  var KEY = "modules-tf-stars", TTL = 36e5;
+  var cache = {};
+  try { cache = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) {}
+  var fmt = function (n) { return n < 1000 ? String(n) : (Math.round(n / 100) / 10) + "k"; };
+  $$("[data-stars]").forEach(function (a) {
+    var repo = a.dataset.stars;
+    var show = function (n) {
+      $("[data-count]", a).textContent = fmt(n);
+      $(".stars", a).hidden = false;
+      a.setAttribute("aria-label", repo + " on GitHub, " + n + (n === 1 ? " star" : " stars"));
+    };
+    var hit = cache[repo];
+    if (hit && Date.now() - hit.t < TTL) { show(hit.n); return; }
+    if (!window.fetch) return;
+    fetch("https://api.github.com/repos/" + repo).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
+      if (!d || typeof d.stargazers_count !== "number") { if (hit) show(hit.n); return; }
+      show(d.stargazers_count);
+      cache[repo] = { n: d.stargazers_count, t: Date.now() };
+      try { localStorage.setItem(KEY, JSON.stringify(cache)); } catch (e) {}
+    }).catch(function () { if (hit) show(hit.n); });
+  });
+
   /* step reveal, progress spine, active step */
   var steps = $$("[data-step]");
   var wrap = $(".steps");
