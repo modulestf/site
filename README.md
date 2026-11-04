@@ -6,7 +6,7 @@ Check the page:
 
 ```bash
 bash tests/site-test.sh            # structure and copy rules
-bash tests/site-test.sh --release  # also fails while the hero review is a placeholder
+bash tests/site-test.sh --release  # also fails while any data-placeholder attribute remains
 bash tests/site-test-selftest.sh   # proves site-test.sh catches known breaks
 NODE_PATH=$(npm root -g) node tests/layout-test.mjs  # layout, themes, contrast, targets, focus (Playwright)
 ```

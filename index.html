@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>modules.tf - review Terraform modules</title>
-<meta name="description" content="modulestf reviews code your agents write against your project's profile and scope.">
-<meta property="og:title" content="modules.tf - Unknown is never a pass">
-<meta property="og:description" content="modulestf reviews code your agents write against your project's profile and scope.">
+<title>modules.tf - review Terraform module pull requests against written rules</title>
+<meta name="description" content="Agent skills for Claude Code and Codex that review Terraform module pull requests against the terraform-aws-modules rules and list every rule they could not check.">
+<meta property="og:title" content="Review Terraform module pull requests against written rules">
+<meta property="og:description" content="Agent skills for Claude Code and Codex that review Terraform module pull requests against the terraform-aws-modules rules and list every rule they could not check.">
 <link rel="icon" type="image/png" href="assets/icon-256.png">
 <link rel="preload" href="assets/fonts/schibsted-grotesk-var.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="styles.css">
@@ -23,8 +23,8 @@
 <a class="skip" href="#main">Skip to content</a>
 <header class="top">
 <a class="brand" href="#hero" aria-label="modules.tf home"><img src="assets/mark.svg" alt="" width="34" height="32"><span>modules.tf</span></a>
-<nav aria-label="Products and sections">
-<a href="#hero" aria-current="page">Review</a>
+<nav aria-label="Sections">
+<a href="#journey">Sample</a>
 <a href="#run">Install</a>
 <a href="#faq">FAQ</a>
 </nav>
@@ -32,39 +32,45 @@
 </header>
 
 <main id="main">
-<p class="notice" role="note"><b>In testing.</b> modulestf is early and may contain errors or bugs. Found one, or disagree with a finding? <a href="https://github.com/modulestf/modulestf/issues">Open an issue on GitHub</a>. We want to hear it.</p>
 <section id="hero" class="hero">
 <div class="hero-copy">
-<h1>Unknown is never a pass</h1>
-<p class="lede">modulestf reviews code your agents write against your project's profile and scope.</p>
-<p class="sub">It reviews Terraform modules. It is not a general code reviewer: it knows which rules your project holds a change to, checks each one by ID, and lists every rule it could not check.</p>
-<p class="actions"><a class="btn primary" data-cta href="#journey">Read this review</a><a class="btn" data-cta href="#run">Install the skills</a></p>
-<p class="meta">Profiles shipped: 1 <span aria-hidden="true">/</span> Apache-2.0</p>
+<h1>Review Terraform module pull requests against written rules</h1>
+<p class="lede">Agent skills for Claude Code and Codex. They check a change to a reusable module rule by rule against the terraform-aws-modules review rules: breaking changes, provider-schema coverage, and whether each addition belongs. Every rule they could not check is listed, never counted as a pass.</p>
+<p class="actions"><a class="btn primary" data-cta href="#run">Install the skills</a><a class="btn" data-cta href="#journey">See a real review</a></p>
+<p class="meta">In testing. From the maintainer of <a href="https://github.com/terraform-aws-modules">terraform-aws-modules</a>. <span class="nw">Apache-2.0.</span></p>
 </div>
-<ol class="mini" aria-label="A review at a glance">
-<li><a href="#request"><b>Request</b><span>Pull request open, review asked for</span></a></li>
-<li><a href="#scope"><b>Scope check</b><span>scope.md decides what belongs</span></a></li>
-<li><a href="#review"><b>Findings</b><span>Severity, rule, location, and a fix</span></a></li>
-<li><a href="#comment"><b>Comment</b><span>One verdict you read and act on</span></a></li>
-<li><a href="#revision"><b>Revision</b><span>You push and ask again</span></a></li>
-<li><a href="#outcome"><b>Updated list</b><span>Fixed, still open, new, and a new verdict</span></a></li>
-</ol>
+<figure class="verdict">
+<p class="v">Changes requested before merge.</p>
+<ul class="vrows">
+<li><span class="chip sev high">HIGH</span><code>structure.sibling-count-mismatch</code><span class="loc">main.tf:1342</span></li>
+<li><span class="chip sev high">HIGH</span><code>profile.region-not-allowed</code><span class="loc">examples/regional-nat/main.tf:8</span></li>
+<li><span class="chip sev medium">MEDIUM</span><code>structure.validation-missing</code><span class="loc">variables.tf:1260</span></li>
+</ul>
+<p class="ev">Behaviour evidence: 56 changes classified: 0 verified, 3 covered by a plan, 0 inert, 0 refuted, 53 not verified</p>
+<p class="ev">Posts nothing until you confirm.</p>
+<figcaption>terraform-aws-modules/terraform-aws-vpc#1270. <a href="https://github.com/terraform-aws-modules/terraform-aws-vpc/pull/1270#pullrequestreview-5764266880">Read the posted review</a></figcaption>
+</figure>
+</section>
+
+<section id="who" class="band who" aria-labelledby="who-h">
+<h2 id="who-h">Who it is for</h2>
+<p>For maintainers of reusable Terraform modules who review pull requests against the terraform-aws-modules rules, including pull requests written by other people's agents.</p>
+<p>It applies one profile today: the terraform-aws-modules rules. It does not apply your internal standards; other profiles need changes to the skills and are future work.</p>
+<p>Not for root configurations or live stacks.</p>
 </section>
 
 <section id="journey" class="journey" aria-labelledby="journey-h">
 <div class="journey-head">
-<h2 id="journey-h">One review, start to finish</h2>
-<p>The findings below come from a real run on an AWS Backup module, reviewed against the terraform-aws-modules profile. That run covered a whole repository; a pull request review has the same shape and is usually shorter.</p>
+<h2 id="journey-h">A real review, step by step</h2>
+<p>The first three steps come from the review posted on <a href="https://github.com/terraform-aws-modules/terraform-aws-vpc/pull/1270">terraform-aws-modules/terraform-aws-vpc#1270</a>, a pull request that adds a regional NAT gateway mode. That pull request had no second round; step four shows what one looks like.</p>
 </div>
 <div class="track-wrap">
 <nav class="rail" aria-label="Review steps">
 <ol>
 <li><a href="#request">Request</a></li>
-<li><a href="#scope">Scope check</a></li>
-<li><a href="#review">Findings</a></li>
+<li><a href="#findings">Findings</a></li>
 <li><a href="#comment">Comment</a></li>
-<li><a href="#revision">Revision</a></li>
-<li><a href="#outcome">Updated list</a></li>
+<li><a href="#round-2">Round 2</a></li>
 </ol>
 </nav>
 <div class="steps">
@@ -72,7 +78,7 @@
 
 <article class="step" id="request" data-step>
 <div class="note"><h3>Request</h3>
-<p>Reads: the pull request reference. Never: the pull request text as instructions.</p></div>
+<p>Reads: the pull request reference. Runs as you, with your own GitHub login.</p></div>
 <div class="body">
 <p class="lead">A pull request is open and you ask your agent for a review.</p>
 <div class="tabs" data-tabs>
@@ -80,90 +86,79 @@
 <button role="tab" type="button" aria-selected="true" aria-controls="p-claude" id="t-claude">Claude Code</button>
 <button role="tab" type="button" aria-selected="false" aria-controls="p-codex" id="t-codex" tabindex="-1">Codex</button>
 </div>
-<div role="tabpanel" id="p-claude" aria-labelledby="t-claude"><pre><code>Review owner/repo#123 with the terraform-module-pr-review skill.</code></pre></div>
-<div role="tabpanel" id="p-codex" aria-labelledby="t-codex" hidden><pre><code>Use terraform-module-pr-review to review owner/repo#123. Read only.</code></pre></div>
+<div role="tabpanel" id="p-claude" aria-labelledby="t-claude"><pre><code>Review terraform-aws-modules/terraform-aws-vpc#1270 with the terraform-module-pr-review skill.</code></pre></div>
+<div role="tabpanel" id="p-codex" aria-labelledby="t-codex" hidden><pre><code>Use terraform-module-pr-review to review terraform-aws-modules/terraform-aws-vpc#1270.</code></pre></div>
 </div>
-<p class="aside">It runs as agent skills in your own coding agent, with your own GitHub login.</p>
-</div>
-</article>
-
-<article class="step" id="scope" data-step>
-<div class="note"><h3>Scope check</h3>
-<p>Reads: <code>scope.md</code> from the profile. Decides, for each addition, whether it belongs in the module at all.</p></div>
-<div class="body">
-<p class="lead">Does each addition belong in the module? Open a row to see why and what to do.</p>
-<ul class="rows" data-rows>
-<li><details><summary><span class="chip out">Out of scope</span><code>.checkov.yml</code>, <code>.trivyignore</code></summary>
-<p>New scanner configuration. The profile carries no scanner beyond its pre-commit hooks and five workflows.</p>
-<p class="fix"><b>Fix</b> Remove both files, or keep them in your own CI repository.</p></details></li>
-<li><details><summary><span class="chip out">Out of scope</span><code>tests/e2e/*_test.go</code></summary>
-<p>New Go test files. The profile carries no Go tests.</p>
-<p class="fix"><b>Fix</b> Remove them from the module, or propose the test layer to the maintainers first.</p></details></li>
-<li><details><summary><span class="chip ok">In scope</span><code>iam.tf</code> adds <code>aws_iam_role</code></summary>
-<p>An IAM role is an adjunct type on the profile's closed list, so it may sit beside the service. It still needs something that uses it.</p></details></li>
-<li><details><summary><span class="chip decide">Maintainer decision</span>an IAM role that nothing uses</summary>
-<p>An adjunct is exempt from the boundary, not from the edge rule. Whether the role stays is for a maintainer to call.</p>
-<p class="fix"><b>Fix</b> Reference the role from a resource, or remove it. Either closes the question.</p></details></li>
-<li><details><summary><span class="chip ne">Not evaluated</span>a check the review could not run</summary>
-<p>A rule that cannot be checked is listed, with the reason. It is an unknown and never counts as a pass.</p></details></li>
-</ul>
-<p class="aside">Out of scope is correctable. Each finding says what to change, and the next round confirms it.</p>
+<p class="aside">On a local branch, terraform-module-reviewer returns findings only, no verdict.</p>
 </div>
 </article>
 
-<article class="step" id="review" data-step>
+<article class="step" id="findings" data-step>
 <div class="note"><h3>Findings</h3>
-<p>Reads: the profile's rules, each with a stable ID. Every finding carries a severity, a location, and a fix.</p></div>
+<p>Reads: the profile's rules, each with an ID. Every finding carries a severity, a location and a fix.</p></div>
 <div class="body">
 <p class="lead">Findings come back grouped by severity, the way a code review does.</p>
 <div class="filter" role="group" aria-label="Filter by severity">
 <button type="button" aria-pressed="true" data-sev="all">All</button>
-<button type="button" aria-pressed="false" data-sev="high">High <span>4</span></button>
-<button type="button" aria-pressed="false" data-sev="medium">Medium <span>2</span></button>
+<button type="button" aria-pressed="false" data-sev="high">High <span>2</span></button>
+<button type="button" aria-pressed="false" data-sev="medium">Medium <span>8</span></button>
 <button type="button" aria-pressed="false" data-sev="low">Low <span>1</span></button>
 </div>
 <ul class="finds" data-finds>
-<li data-sev="high"><details><summary><span class="chip sev high">HIGH</span><code>scope.tooling</code><em>2</em></summary>
-<p><code>.checkov.yml</code>, <code>.trivyignore</code> - new scanner configuration on the profile's closed list.</p>
-<p class="fix"><b>Fix</b> Delete both files from the module.</p></details></li>
-<li data-sev="high"><details><summary><span class="chip sev high">HIGH</span><code>scope.layout</code><em>28</em></summary>
-<p><code>.github/CODEOWNERS</code>, <code>.tflint.hcl</code>, <code>tests/setup/*/main.tf</code> and 25 more - files outside the profile's layout table.</p>
-<p class="fix"><b>Fix</b> Remove the files the layout table does not admit. The table is in the profile.</p></details></li>
-<li data-sev="high"><details><summary><span class="chip sev high">HIGH</span><code>profile.release-config-changed</code><em>1</em></summary>
-<p><code>.github/workflows/release.yml:20</code> - the release job runs only for the previous repository owner, so no release is cut once the module moves.</p>
-<p class="fix"><b>Fix</b> Restore the owner check from the template: <code>terraform-aws-modules</code>.</p></details></li>
+<li data-sev="high"><details><summary><span class="chip sev high">HIGH</span><code>structure.sibling-count-mismatch</code><em>1</em></summary>
+<p><code>main.tf:1342</code> - <code>aws_route.private_dns64_nat_gateway</code> still counts <code>local.nat_gateway_count</code> (1 in regional mode), so only the first private route table gets <code>64:ff9b::/96</code>.</p></details></li>
 <li data-sev="high"><details><summary><span class="chip sev high">HIGH</span><code>profile.region-not-allowed</code><em>1</em></summary>
-<p><code>examples/cross-region-copy/main.tf:7</code> - <code>region_secondary = "eu-west-3"</code> chooses a region the profile does not allow.</p>
-<p class="fix"><b>Fix</b> Set <code>region_secondary</code> to <code>"us-east-1"</code>, the one secondary region the profile allows.</p></details></li>
-<li data-sev="medium"><details><summary><span class="chip sev medium">MEDIUM</span><code>profile.required-file-missing</code><em>1</em></summary>
-<p><code>examples/basic</code> - the profile's minimal example is missing; <code>examples/simple</code> fills its role under another name.</p>
-<p class="fix"><b>Fix</b> Rename <code>examples/simple</code> to <code>examples/basic</code>.</p></details></li>
-<li data-sev="medium"><details><summary><span class="chip sev medium">MEDIUM</span><code>structure.comment-unsourced</code><em>5</em></summary>
-<p><code>plans.tf:21</code> and four more - comments assert service behavior with no link to an official source and no date.</p>
-<p class="fix"><b>Fix</b> Add the documentation URL and the date to each comment, or remove the claim.</p></details></li>
-<li data-sev="low"><details><summary><span class="chip sev low">LOW</span><code>profile.template-drift</code><em>2</em></summary>
-<p><code>.gitignore</code> - diverges from the profile template with no stated reason.</p>
-<p class="fix"><b>Fix</b> Start from the template and keep only the additions you can explain.</p></details></li>
+<p><code>examples/regional-nat/main.tf:8</code> - The new example sets <code>local.region</code> to <code>"ap-south-1"</code>, a region the profile does not allow for examples.</p>
+<p class="fix"><b>Fix</b> In the <code>locals</code> block of <code>examples/regional-nat/main.tf</code>, set <code>region</code> to <code>"eu-west-1"</code>, per code-conventions.md Regions.</p></details></li>
+<li data-sev="medium"><details><summary><span class="chip sev medium">MEDIUM</span><code>structure.sibling-block-asymmetry</code><em>1</em></summary>
+<p><code>main.tf:1314</code> - The <code>availability_zone_address</code> dynamic block sets only <code>availability_zone</code>, never <code>availability_zone_id</code>, so <code>azs</code> given as zone IDs, which the subnets accept, reach the wrong argument.</p>
+<p class="fix"><b>Fix</b> In the dynamic block of <code>resource "aws_nat_gateway" "regional"</code>, set <code>availability_zone</code> and <code>availability_zone_id</code> with the <code>regexall("^[a-z]+-", ...)</code> test <code>aws_subnet.private</code> uses, the other one <code>null</code>.</p></details></li>
+<li data-sev="medium"><details><summary><span class="chip sev medium">MEDIUM</span><code>structure.validation-missing</code><em>1</em></summary>
+<p><code>variables.tf:1260</code> - <code>availability_mode</code> and <code>eip_allocation</code> take closed value sets but their <code>validation</code> blocks are commented out, so a typo such as <code>"Regional"</code> silently yields zonal NAT gateways.</p>
+<p class="fix"><b>Fix</b> In <code>variable "nat_gateway_connectivity_type"</code>, restore both commented <code>validation</code> blocks.</p></details></li>
+<li data-sev="medium"><details><summary><span class="chip sev medium">MEDIUM</span><code>structure.version-floor-understated</code><em>1</em></summary>
+<p><code>examples/regional-nat/version.tf:7</code> - The example declares <code>hashicorp/aws</code> <code>&gt;= 6.24.0</code> while the module it calls requires <code>&gt;= 6.28</code>, so the caller's floor is below its callee's.</p>
+<p class="fix"><b>Fix</b> In the <code>terraform</code> block of <code>examples/regional-nat/version.tf</code>, set the <code>aws</code> <code>version</code> to <code>"&gt;= 6.28"</code>, and drop the <code>&gt;= 6.24.0</code> comment in the example <code>main.tf</code>, per code-conventions.md Version floors.</p></details></li>
+<li data-sev="medium"><details><summary><span class="chip sev medium">MEDIUM</span><code>coverage.optional-argument-unexposed</code><em>1</em></summary>
+<p><code>main.tf:1250</code> - New <code>aws_eip.regional_nat</code> leaves Optional <code>public_ipv4_pool</code>, <code>ipam_pool_id</code>, <code>network_border_group</code> and <code>address</code> unexposed, with no documented omission.</p>
+<p class="fix"><b>Fix</b> Needs decision: expose these arguments or record why they are left out.</p></details></li>
+<li data-sev="medium"><details><summary><span class="chip sev medium">MEDIUM</span><code>coverage.attribute-not-output</code><em>1</em></summary>
+<p><code>main.tf:1299</code> - New <code>aws_nat_gateway.regional</code> exports <code>route_table_id</code>, <code>auto_provision_zones</code>, <code>auto_scaling_ips</code> and <code>regional_nat_gateway_auto_mode</code>, and no output reads them.</p>
+<p class="fix"><b>Fix</b> In <code>outputs.tf</code>, add output <code>natgw_regional_route_table_id</code> = <code>try(aws_nat_gateway.regional[0].route_table_id, null)</code>, the route table AWS creates.</p></details></li>
+<li data-sev="medium"><details><summary><span class="chip sev medium">MEDIUM</span><code>examples.feature-undemonstrated</code><em>1</em></summary>
+<p><code>main.tf:1308</code> - Manual EIP mode, <code>aws_eip.regional_nat</code> and the <code>availability_zone_address</code> dynamic block, appears in no example; <code>examples/regional-nat</code> sets only <code>eip_allocation = "auto"</code>.</p>
+<p class="fix"><b>Fix</b> In <code>examples/regional-nat/main.tf</code>, add a <code>module "vpc_manual"</code> call like <code>module "vpc"</code> with <code>eip_allocation = "manual"</code> in <code>nat_gateway_connectivity_type</code>.</p></details></li>
+<li data-sev="medium"><details><summary><span class="chip sev medium">MEDIUM</span><code>structure.comment-unsourced</code><em>2</em></summary>
+<p><code>main.tf:1224</code> - The added comment asserts a regional NAT gateway has no <code>network_interface_id</code> or <code>public_ip</code> of its own, and cites no source or date.</p>
+<p><code>variables.tf:1252</code> - The added comment asserts <code>optional()</code> defaults need Terraform 1.3 and cites no source or date.</p>
+<p class="fix"><b>Fix</b> On each comment, add the documentation URL and the date it was read, per code-conventions.md Evidence: comments, copied values, and availability.</p></details></li>
+<li data-sev="medium"><details><summary><span class="chip sev medium">MEDIUM</span><code>examples.versions-missing</code><em>1</em></summary>
+<p><code>examples/regional-nat/version.tf</code> - The new example keeps its <code>terraform</code> block in <code>version.tf</code>; every sibling example names that file <code>versions.tf</code>.</p>
+<p class="fix"><b>Fix</b> Rename <code>examples/regional-nat/version.tf</code> to <code>examples/regional-nat/versions.tf</code>, matching templates/example-versions.tf.template.</p></details></li>
+<li data-sev="low"><details><summary><span class="chip sev low">LOW</span><code>examples.docs-incomplete</code><em>1</em></summary>
+<p><code>examples/regional-nat/README.md</code> - The new example README has no terraform-docs markers; its hand-written Requirements table states <code>aws &gt;= 6.24.0</code>, below the module's floor.</p>
+<p class="fix"><b>Fix</b> In <code>examples/regional-nat/README.md</code>, replace the Requirements section with <code>&lt;!-- BEGIN_TF_DOCS --&gt;</code>/<code>&lt;!-- END_TF_DOCS --&gt;</code> markers.</p></details></li>
 </ul>
-<p class="aside">Excerpt of a real run. Fix text on this page is written for the page from each finding.</p>
+<p class="aside">From the posted review of terraform-aws-vpc#1270, against the terraform-aws-modules profile. Finding text is quoted from the review; some fixes are shortened.</p>
 </div>
 </article>
 
 <article class="step" id="comment" data-step>
 <div class="note"><h3>Comment</h3>
-<p>Writes: one verdict, computed by fixed rules from the findings and the pull request's checks and threads. Nothing is posted until you confirm.</p></div>
+<p>Writes: one verdict, computed by fixed rules from the findings and the pull request's checks and threads. It posts nothing until you confirm.</p></div>
 <div class="body">
 <p class="lead">You get one verdict, in plain words.</p>
 <figure class="verdict">
 <p class="v">Changes requested before merge.</p>
-<p>HIGH findings are open. 4 HIGH, 2 MEDIUM, 1 LOW shown here; the full run listed 84.</p>
-<p class="aside">The verdict names the rule that produced it. A check that could not run makes it Inconclusive, unless a CRITICAL or HIGH finding, a failing check, a merge conflict or a review that requests changes already decides it.</p>
+<p>Two HIGH findings are open. Any HIGH finding blocks merge (ladder rule 2).</p>
+<p class="ev">Behaviour evidence: 56 changes classified: 0 verified, 3 covered by a plan, 0 inert, 0 refuted, 53 not verified; 0 claims: 0 verified, 0 refuted, 0 not verified.</p>
+<p class="aside">The verdict names the rule that produced it. When a check could not run, the verdict is Inconclusive, unless a CRITICAL or HIGH finding, a failing check, a merge conflict or a review that requests changes already decides it, as the two HIGH findings do here. Unknown is never a pass: the 53 changes not verified and the two examples that were not planned are listed under "Checks that could not run".</p>
 </figure>
 </div>
 </article>
 
-<article class="step" id="revision" data-step>
-<div class="note"><h3>Revision</h3>
+<article class="step" id="round-2" data-step data-illustrative>
+<div class="note"><h3>Round 2</h3>
 <p>Reads: the new head. Runs the same rules again and compares with the last list.</p></div>
 <div class="body">
 <p class="lead">You fix what it found, push, and ask for the review again.</p>
@@ -171,79 +166,66 @@
 <button type="button" aria-pressed="true" data-round="1">Round 1</button>
 <button type="button" aria-pressed="false" data-round="2">Round 2</button>
 </div>
-<ul class="rounds" data-rounds data-round="1" data-placeholder>
-<li data-r2="fixed"><span class="chip sev high">HIGH</span><code>scope.tooling</code><b class="st">fixed</b></li>
-<li data-r2="fixed"><span class="chip sev high">HIGH</span><code>scope.layout</code><b class="st">fixed</b></li>
-<li data-r2="fixed"><span class="chip sev high">HIGH</span><code>profile.release-config-changed</code><b class="st">fixed</b></li>
+<ul class="rounds" data-rounds data-round="1">
+<li data-r2="fixed"><span class="chip sev high">HIGH</span><code>structure.sibling-count-mismatch</code><b class="st">fixed</b></li>
 <li data-r2="fixed"><span class="chip sev high">HIGH</span><code>profile.region-not-allowed</code><b class="st">fixed</b></li>
-<li data-r2="fixed"><span class="chip sev medium">MEDIUM</span><code>profile.required-file-missing</code><b class="st">fixed</b></li>
+<li data-r2="fixed"><span class="chip sev medium">MEDIUM</span><code>structure.sibling-block-asymmetry</code><b class="st">fixed</b></li>
+<li data-r2="fixed"><span class="chip sev medium">MEDIUM</span><code>structure.validation-missing</code><b class="st">fixed</b></li>
+<li data-r2="fixed"><span class="chip sev medium">MEDIUM</span><code>structure.version-floor-understated</code><b class="st">fixed</b></li>
+<li data-r2="fixed"><span class="chip sev medium">MEDIUM</span><code>coverage.optional-argument-unexposed</code><b class="st">fixed</b></li>
+<li data-r2="fixed"><span class="chip sev medium">MEDIUM</span><code>coverage.attribute-not-output</code><b class="st">fixed</b></li>
+<li data-r2="fixed"><span class="chip sev medium">MEDIUM</span><code>examples.feature-undemonstrated</code><b class="st">fixed</b></li>
 <li data-r2="fixed"><span class="chip sev medium">MEDIUM</span><code>structure.comment-unsourced</code><b class="st">fixed</b></li>
-<li data-r2="open"><span class="chip sev low">LOW</span><code>profile.template-drift</code><b class="st">open</b></li>
-<li data-r2="new" class="new"><span class="chip sev low">LOW</span><code>structure.argument-order</code><b class="st">new</b></li>
+<li data-r2="fixed"><span class="chip sev medium">MEDIUM</span><code>examples.versions-missing</code><b class="st">fixed</b></li>
+<li data-r2="open"><span class="chip sev low">LOW</span><code>examples.docs-incomplete</code><b class="st">open</b></li>
 </ul>
-<p class="aside">Illustrative second round. A finding can be fixed, stay open, or appear because of the new code.</p>
-</div>
-</article>
-
-<article class="step" id="outcome" data-step>
-<div class="note"><h3>Updated list</h3>
-<p>Writes: a new verdict on the new head.</p></div>
-<div class="body">
-<p class="lead">The list shrinks, and the verdict follows it.</p>
 <figure class="verdict good">
 <p class="v">Good to merge, with nits.</p>
-<p>6 fixed, 1 new, 2 left at LOW. Merging is still your decision.</p>
+<p>Every HIGH and MEDIUM finding fixed, one LOW left open. Merging is still your decision.</p>
 </figure>
+<p class="aside">Illustrative second round, built from the same rule IDs. To reach this verdict every HIGH and MEDIUM finding must be fixed and every check must have run; a LOW finding may stay open.</p>
 </div>
 </article>
 </div>
 </div>
+</section>
+
+<section id="standards" class="band" aria-labelledby="std-h">
+<h2 id="std-h">What it checks</h2>
+<p class="wide">A profile is the written-down set of rules a review checks against, each with an ID and a severity. One profile ships: terraform-aws-modules, the rules its maintainer uses to review pull requests for <a href="https://github.com/terraform-aws-modules">terraform-aws-modules</a>. Every finding cites a rule. Some of them:</p>
+<div class="tablewrap"><table class="cmp rules">
+<thead><tr><th scope="col">Rule</th><th scope="col">Checks</th><th scope="col">Kind</th></tr></thead>
+<tbody>
+<tr><td><code>compat.*</code></td><td>Breaking changes held for the next major release. 11 rules, such as <code>compat.variable-removed</code>, <code>compat.resource-address-changed</code> and <code>compat.default-changed</code></td><td>Compatibility</td></tr>
+<tr><td><code>coverage.attribute-not-output</code></td><td>Attributes a new resource exports surface as outputs</td><td>Provider schema</td></tr>
+<tr><td><code>coverage.optional-argument-unexposed</code></td><td>Optional arguments of a new resource are inputs, or their omission is documented</td><td>Provider schema</td></tr>
+<tr><td><code>examples.feature-undemonstrated</code></td><td>Each feature the change adds appears in an example</td><td>Examples</td></tr>
+<tr><td><code>structure.comment-unsourced</code></td><td>Comments that assert service behavior cite a source and a date</td><td>Structure</td></tr>
+<tr><td><code>profile.region-not-allowed</code></td><td>Examples use <code>eu-west-1</code>, or <code>us-east-1</code> for a second region</td><td>House rule</td></tr>
+<tr><td><code>scope.tooling</code></td><td>No new scanner, linter or cost tool configuration in the module repository</td><td>House rule</td></tr>
+<tr><td><code>scope.tests</code></td><td>No Go tests; native tests use <code>terraform test</code> with <code>command = plan</code></td><td>House rule</td></tr>
+<tr><td><code>scope.layout</code></td><td>New files sit where the profile's layout allows</td><td>House rule</td></tr>
+</tbody></table></div>
+<p class="wide">House rules are how terraform-aws-modules keeps its modules: what a module may contain, its scanners, tests, regions and layout. Scanner config belongs outside the module repository; keep running your scanners in your own CI.</p>
+<p class="wide">A module's docs/SCOPE.md, read from the base branch, can only allow or deny resource types and providers. Scanner, test and layout rules have no per-module exception.</p>
+<p class="wide">The profile is the maintainer's review practice, written down. It is not a policy document published by the terraform-aws-modules organization, and it changes as the review practice does. The model applies the rules; it does not invent them.</p>
+<p class="wide">No account or hosted service. The profile is plain files in the modulestf repository; you can read every rule.</p>
+<p><a href="https://github.com/modulestf/modulestf/tree/master/.agents/skills/terraform-module-maintainer/profiles/terraform-aws-modules">Read the terraform-aws-modules profile on GitHub</a></p>
 </section>
 
 <section id="different" class="band" aria-labelledby="diff-h">
 <h2 id="diff-h">Not a generic code reviewer</h2>
-<p class="wide">A general-purpose review tool brings its own idea of good code. modulestf brings yours, written down.</p>
+<p class="wide">A general-purpose review tool brings its own idea of good code. modulestf applies written rules, one by one.</p>
 <div class="tablewrap"><table class="cmp">
 <thead><tr><th scope="col">Question</th><th scope="col">General-purpose review tool (typical)</th><th scope="col">modulestf</th></tr></thead>
 <tbody>
-<tr><th scope="row">Where does the standard come from?</th><td>The model's own sense of quality</td><td>Rules in your profile and <code>scope.md</code>, each with an ID</td></tr>
-<tr><th scope="row">Does the addition belong at all?</th><td>Reviews what is in the diff</td><td>Checks each addition: in scope, out of scope, or a maintainer decision</td></tr>
+<tr><th scope="row">Where does the standard come from?</th><td>The model's own sense of quality</td><td>Rules in the terraform-aws-modules profile, each with an ID</td></tr>
+<tr><th scope="row">Does the addition belong at all?</th><td>Reviews what is in the diff</td><td>Checks each addition: it belongs, it is out of scope, or a maintainer decides</td></tr>
 <tr><th scope="row">A rule it could not check</th><td>Silence reads as fine</td><td>Listed as not evaluated; it never counts as a pass</td></tr>
 <tr><th scope="row">What do you get?</th><td>Free-form comments</td><td>One verdict, rule ID, location, a fix, evidence</td></tr>
-<tr><th scope="row">Text inside the change</th><td>Read as context</td><td>Untrusted data; it never clears a rule</td></tr>
+<tr><th scope="row">Static tools</th><td class="span" colspan="2">Keep running tflint, checkov, trivy and terraform-docs in your CI. modulestf does not run in CI; it runs in your agent and compares base and head.</td></tr>
 </tbody></table></div>
 <p class="foot">The middle column describes the category, not a named product.</p>
-</section>
-
-<section id="standards" class="band" aria-labelledby="std-h">
-<h2 id="std-h">What it checks against</h2>
-<p class="wide">Every finding cites a rule. Some of them:</p>
-<div class="tablewrap"><table class="cmp">
-<thead><tr><th scope="col">Rule</th><th scope="col">Checks</th><th scope="col">From</th></tr></thead>
-<tbody>
-<tr><td><code>scope.layout</code></td><td>Files and folders belong in a module of this family</td><td>scope.md</td></tr>
-<tr><td><code>scope.tests</code></td><td>Test additions the profile does not accept</td><td>scope.md</td></tr>
-<tr><td><code>profile.region-not-allowed</code></td><td>Examples use only regions the profile allows</td><td>profile</td></tr>
-<tr><td><code>structure.comment-unsourced</code></td><td>Comments that assert service behavior link a source and a date</td><td>profile</td></tr>
-<tr><td><code>coverage.attribute-not-output</code></td><td>Resource attributes surface as outputs</td><td>profile</td></tr>
-</tbody></table></div>
-</section>
-
-<section id="run" class="band" aria-labelledby="run-h">
-<h2 id="run-h">Install</h2>
-<p class="wide">The skills are plain files that live side by side. Copy them where your agent loads skills.</p>
-<div class="code"><button type="button" class="copy" data-copy hidden>Copy</button>
-<pre><code>git clone https://github.com/modulestf/modulestf
-
-# Claude Code
-mkdir -p ~/.claude/skills
-ln -sfn "$PWD"/modulestf/.agents/skills/* ~/.claude/skills/
-
-# Codex
-mkdir -p ~/.agents/skills
-ln -sfn "$PWD"/modulestf/.agents/skills/* ~/.agents/skills/</code></pre></div>
-<p class="wide">They also need HashiCorp's Terraform MCP server, added to your agent under the name <code>terraform</code>, plus <code>gh</code> logged in as you, <code>git</code>, <code>jq</code> and the <code>terraform</code> command line. The <a href="https://github.com/modulestf/modulestf#quick-start">README</a> has the details and what each task needs.</p>
-<p class="foot">Apache-2.0. Runs entirely without compliance.tf; profiles are plain files in your repository.</p>
 </section>
 
 <section id="never" class="band" aria-labelledby="never-h">
@@ -251,76 +233,80 @@ ln -sfn "$PWD"/modulestf/.agents/skills/* ~/.agents/skills/</code></pre></div>
 <ul class="plain">
 <li>Run <code>terraform apply</code> or write state.</li>
 <li>Merge, push or resolve threads. It posts only the review you confirm.</li>
-<li>Follow instructions found in a pull request. Its body, comments and files are data under review.</li>
-<li>Run <code>terraform init</code> or <code>terraform validate</code> with your AWS, GitHub, Terraform or SSH credentials.</li>
+<li>Post under a bot or CI identity. There the pull request review only renders and never posts.</li>
+<li>Follow instructions found in a pull request. PR text is data: its body, comments and files are under review, and none of it clears a rule.</li>
+<li>Run <code>terraform init</code> or <code>validate</code> with your credentials. They run the providers the change pins, with AWS, GitHub, Terraform and SSH credentials removed and an empty home directory.</li>
 <li>Run <code>terraform plan</code> unless you name an AWS profile and a read-only review role. It plans in an isolated container when Docker is available, otherwise on your machine behind stricter checks that reduce the risk but cannot remove it.</li>
 </ul>
 </section>
 
-<section id="profiles" class="band" aria-labelledby="prof-h">
-<h2 id="prof-h">Profiles</h2>
-<p class="status">Profiles shipped: 1</p>
-<p class="wide">A profile is the written-down standard a review checks against. The one that ships is <b>terraform-aws-modules</b>, and it is made of the actual rules we use to review pull requests for <a href="https://github.com/terraform-aws-modules">terraform-aws-modules</a>.</p>
+<section id="run" class="band" aria-labelledby="run-h">
+<h2 id="run-h">Install</h2>
+<div class="req">
+<div>
+<h3>Local branch review</h3>
 <ul class="plain">
-<li><b>scope.md:</b> what a module may contain. A closed list of adjunct resource types (IAM, logs, network access), the ambient data sources, and what repository files and tooling belong in a module.</li>
-<li><b>Layout and templates:</b> the file set, the verbatim files, the five workflows, and which files are customized after the copy.</li>
-<li><b>Code conventions:</b> naming, variables and outputs, comments that cite a source and a date, validation, and what examples must demonstrate.</li>
-<li><b>Review guide:</b> how each rule is judged, with a stable ID and a severity.</li>
+<li><code>git</code></li>
+<li>HashiCorp's <a href="https://github.com/hashicorp/terraform-mcp-server">Terraform MCP server</a>, added to your agent under the name <code>terraform</code>. Without it, rules that need a provider fact are not run.</li>
 </ul>
-<p class="wide">It is the maintainer's review practice, written down. It is not a policy document published by the terraform-aws-modules organization, and it changes as the review practice does. Rules in it are not guesses by the model; the model applies them.</p>
-<p class="wide">A profile is plain files. There are no other ready profiles yet. To review your own modules to your own rules, start from the shape of this one, as its <code>PROFILE.md</code> describes.</p>
-<p><a href="https://github.com/modulestf/modulestf/tree/master/.agents/skills/terraform-module-maintainer/profiles/terraform-aws-modules">Read the terraform-aws-modules profile</a></p>
+</div>
+<div>
+<h3>Pull request review (adds)</h3>
+<ul class="plain">
+<li><code>gh</code> logged in as a person</li>
+<li><code>jq</code>, <code>perl</code> and <code>terraform</code></li>
+<li>Go, to install <code>mtf-facts</code>. Without it a pull request review ends Inconclusive.</li>
+<li><code>sandbox-exec</code> (macOS) or <code>bwrap</code> (Linux)</li>
+</ul>
+</div>
+</div>
+<div class="code"><button type="button" class="copy" data-copy hidden>Copy</button>
+<pre><code>git clone --branch v0.1.0-rc.5 https://github.com/modulestf/modulestf.git
+
+# Claude Code
+mkdir -p ~/.claude/skills
+ln -sfn "$PWD"/modulestf/.agents/skills/* ~/.claude/skills/
+
+# Codex
+mkdir -p ~/.agents/skills
+ln -sfn "$PWD"/modulestf/.agents/skills/* ~/.agents/skills/
+
+# Pull request review
+go install github.com/modulestf/facts/cmd/mtf-facts@v0.4.0-rc.4</code></pre></div>
+<ul class="plain skills">
+<li><b>terraform-module-pr-review</b> reviews a pull request or a commit and proposes one verdict. Ask it to triage for a quick pass, a mode that never approves.</li>
+<li><b>terraform-module-reviewer</b> reviews a local diff, a branch or a whole module and returns findings only, no verdict. It reads committed changes only.</li>
+<li><b>terraform-module-maintainer</b> applies findings, drafts replies to review comments and upgrades a provider major version.</li>
+</ul>
+<p class="wide">The symlinks also install change-scope, which the three skills call. The <a href="https://github.com/modulestf/modulestf#quick-start">README</a> has the details and what each task needs.</p>
 </section>
 
-<section id="limits" class="band" aria-labelledby="lim-h">
-<h2 id="lim-h">Limits today</h2>
+<section id="status" class="band" aria-labelledby="status-h">
+<h2 id="status-h">Status</h2>
 <ul class="plain">
 <li>In testing: expect errors, bugs and findings you will disagree with.</li>
-<li>One profile: Terraform modules in the terraform-aws-modules style.</li>
-<li>The skills work on a local diff, a pull request, a commit or a whole module. Pull requests and commits must be on GitHub.</li>
+<li>Pull requests and commits must be on GitHub.</li>
 <li>A passing <code>terraform validate</code> is evidence, not proof: it ran the providers the change declares.</li>
+<li>Some of these may come, and some may not: a hosted GitHub App, a CLI, an MCP server, SARIF export, organization standards, more profiles. There are no dates; treat none of them as a promise.</li>
 </ul>
-<p class="wide">Disagree with a finding? <a href="https://github.com/modulestf/modulestf/issues">Open an issue</a> with the rule ID and your reason.</p>
+<p class="wide">A wrong or noisy finding, a rule that should change, a missing rule, or a run that failed: <a href="https://github.com/modulestf/modulestf/issues">open an issue</a> with the rule ID and your reason, or with what you asked for and what you got. Watch the repository's releases to know when something new exists. Nothing else is collected.</p>
+<p class="wide">modulestf is created and maintained by <a href="https://github.com/antonbabenko">Anton Babenko</a>, maintainer of <a href="https://github.com/terraform-aws-modules">terraform-aws-modules</a> and <a href="https://github.com/antonbabenko/terraform-skill">terraform-skill</a>, and creator of <a href="https://compliance.tf">compliance.tf</a>. terraform-skill helps agents write modules; modulestf reviews what they write.</p>
 </section>
 
 <section id="faq" class="band" aria-labelledby="faq-h">
 <h2 id="faq-h">FAQ</h2>
 <dl class="faq">
-<div><dt>Does it block merges?</dt><dd>Only if you post its review as a request for changes and your branch protection requires reviews. It never merges, and it posts nothing until you confirm.</dd></div>
+<div><dt>Does it block merges?</dt><dd>Only if you post its review as a request for changes and your branch protection requires reviews. It never merges.</dd></div>
 <div><dt>Does it need my cloud credentials?</dt><dd>No. Validation runs without credentials. A plan pass runs only when you name an AWS profile and a read-only review role.</dd></div>
 <div><dt>Who pays for the model?</dt><dd>You do: the skills run in the coding agent you already use.</dd></div>
-<div><dt>Can I run it without a hosted service?</dt><dd>There is no hosted service. The skills run in your agent on your machine.</dd></div>
-<div><dt>What happens when it is wrong?</dt><dd>Open an issue on GitHub with the rule ID. It is in testing and will be wrong sometimes. Nothing is posted until you confirm, so a review you disagree with never has to reach the pull request.</dd></div>
-<div><dt>Does it follow instructions in pull request text?</dt><dd>No. Pull request text is data under review. It never clears a rule.</dd></div>
+<div><dt>Can it run in CI?</dt><dd>No. It runs in your agent as you; under a bot or CI identity it only renders and never posts.</dd></div>
 </dl>
-</section>
-
-<section id="coming" class="band" aria-labelledby="coming-h">
-<h2 id="coming-h">Coming</h2>
-<p class="wide">Some of these may come, and some may not. There are no guarantees and no dates: a hosted GitHub App, a CLI, an MCP server, SARIF export, organization standards, more profiles. Treat none of them as a promise.</p>
-<p class="wide"><a href="https://github.com/modulestf/modulestf/issues">Open an issue</a> to ask for one of them, or watch the repository's releases to know when one exists. Nothing else is collected.</p>
-</section>
-
-<section id="maintainer" class="band" aria-labelledby="m-h">
-<h2 id="m-h">Who makes this</h2>
-<p class="wide">modulestf is created and maintained by <a href="https://github.com/antonbabenko">Anton Babenko</a>, maintainer of <a href="https://github.com/terraform-aws-modules">terraform-aws-modules</a> and <a href="https://github.com/antonbabenko/terraform-skill">terraform-skill</a>, and creator of <a href="https://compliance.tf">compliance.tf</a>.</p>
-<p class="wide">terraform-skill helps agents write modules; modulestf reviews what they write.</p>
-</section>
-
-<section id="feedback" class="band" aria-labelledby="fb-h">
-<h2 id="fb-h">Tell us what is wrong</h2>
-<p class="wide">modulestf is in testing. It may produce wrong findings, miss things, or fail in ways we have not seen. Every report helps.</p>
-<ul class="plain">
-<li>A wrong or noisy finding: <a href="https://github.com/modulestf/modulestf/issues">open an issue</a> with the rule ID and your reason.</li>
-<li>A rule that should change, or a missing rule: <a href="https://github.com/modulestf/modulestf/issues">open an issue</a> with the rule ID, or the case it should catch.</li>
-<li>A bug or a run that failed: open an issue with what you asked for and what you got.</li>
-</ul>
 </section>
 </main>
 
 <footer id="footer" class="foot-bar">
 <p>From the maintainer of <a href="https://github.com/terraform-aws-modules">terraform-aws-modules</a>, <a href="https://github.com/antonbabenko/terraform-skill">terraform-skill</a> and <a href="https://compliance.tf">compliance.tf</a>.</p>
-<p>Created and maintained by <a href="https://github.com/antonbabenko">Anton Babenko</a>. In testing: may contain errors or bugs. <a href="https://github.com/modulestf/modulestf/issues">Report an issue</a>.</p>
+<p>Created and maintained by <a href="https://github.com/antonbabenko">Anton Babenko</a>.</p>
 <p><a href="https://github.com/modulestf/modulestf">GitHub</a> <span aria-hidden="true">/</span> Apache-2.0 <span aria-hidden="true">/</span> Plausible counts visits without cookies.</p>
 </footer>
 </body>
