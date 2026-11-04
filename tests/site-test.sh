@@ -1,6 +1,7 @@
 #!/bin/bash
 # Checks for the modules.tf page. Run: bash tests/site-test.sh [--release]
 # --release also fails while any data-placeholder attribute remains.
+# Always: the word "Illustrative" may appear only inside the element marked data-illustrative.
 set -uo pipefail
 cd "$(dirname "$0")/.." || exit 1
 page=index.html
@@ -8,14 +9,17 @@ fails=0
 ok() { echo "ok $1"; }
 fail() { echo "FAIL $1: $2"; fails=$((fails + 1)); }
 
-ids=(hero journey different standards run never profiles limits faq coming maintainer feedback footer)
+ids=(hero who journey standards different never run status faq footer)
 fixed=(
-  "Unknown is never a pass"
-  "modulestf reviews code your agents write against your project's profile and scope."
-  "terraform-skill helps agents write modules; modulestf reviews what they write."
-  "Apache-2.0. Runs entirely without compliance.tf; profiles are plain files in your repository."
+  "Review Terraform module pull requests against written rules"
+  "Agent skills for Claude Code and Codex. They check a change to a reusable module rule by rule against the terraform-aws-modules review rules: breaking changes, provider-schema coverage, and whether each addition belongs. Every rule they could not check is listed, never counted as a pass."
+  "From the maintainer of terraform-aws-modules. Apache-2.0."
+  "For maintainers of reusable Terraform modules who review pull requests against the terraform-aws-modules rules, including pull requests written by other people's agents."
+  "It applies one profile today: the terraform-aws-modules rules. It does not apply your internal standards; other profiles need changes to the skills and are future work."
+  "Not for root configurations or live stacks."
+  "No account or hosted service. The profile is plain files in the modulestf repository; you can read every rule."
+  "A module's docs/SCOPE.md, read from the base branch, can only allow or deny resource types and providers. Scanner, test and layout rules have no per-module exception."
   "From the maintainer of terraform-aws-modules, terraform-skill and compliance.tf."
-  "Profiles shipped: 1"
 )
 
 if [ ! -f "$page" ]; then fail page "missing $page"; echo "$fails failed"; exit 1; fi
@@ -25,14 +29,15 @@ found=$(grep -oE '<section id="[a-z]+"|<footer id="[a-z]+"' "$page" | sed -E 's/
 if [ "$found" = "${ids[*]} " ]; then ok sections; else fail sections "got '$found'"; fi
 
 # ascii: tracked and untracked files, minus .git
-bad=$(git ls-files --cached --others --exclude-standard -z | xargs -0 -r env LC_ALL=C grep -lIP '[^\x20-\x7e\t]' 2>/dev/null)
+bad=$(git ls-files --cached --others --exclude-standard -z | xargs -0 env LC_ALL=C grep -lI $'[^\t -~]')
 if [ -z "$bad" ]; then ok ascii; else fail ascii "$bad"; fi
 
 # fixed-copy: each string appears verbatim (HTML apostrophe written as ')
 missing=""
 plain=$(sed -E 's/<[^>]*>//g' "$page")
 for s in "${fixed[@]}"; do grep -qF -- "$s" <<<"$plain" || missing="$missing [$s]"; done
-# The canonical sentence also sits in the meta description, so check the visible lede itself.
+# Check the visible h1 and lede elements themselves, not just the text somewhere on the page.
+grep -qF -- "<h1>${fixed[0]}</h1>" "$page" || missing="$missing [h1]"
 grep -qF -- "<p class=\"lede\">${fixed[1]}</p>" "$page" || missing="$missing [lede]"
 if [ -z "$missing" ]; then ok fixed-copy; else fail fixed-copy "$missing"; fi
 
@@ -56,8 +61,21 @@ for a in $(grep -oE 'href="#[A-Za-z0-9_-]+"' "$page" | sed -E 's/href="#(.*)"/\1
 done
 if [ -z "$dead" ]; then ok anchors; else fail anchors "$dead"; fi
 
+# illustrative: cut each element marked data-illustrative, to its matching close tag, then the word must be gone
+outside=$(perl -e '
+  undef $/; $_ = <>;
+  while (/<([a-z0-9]+)\b[^>]*\bdata-illustrative\b[^>]*>/) {
+    my ($tag, $start) = ($1, $-[0]); pos($_) = $+[0]; my $d = 1;
+    while ($d && /<(\/?)\Q$tag\E\b[^>]*>/g) { $d += $1 ? -1 : 1 }
+    my $end = $d ? length($_) : pos($_);
+    substr($_, $start, $end - $start) = "";
+  }
+  print;
+' "$page" | grep -iE 'illustrative')
+if [ -z "$outside" ]; then ok illustrative; else fail illustrative "$outside"; fi
+
 if [ "${1:-}" = "--release" ]; then
-  if grep -qiE 'data-placeholder|placeholder - not a real run|Illustrative' "$page"; then fail release "placeholder review remains"; else ok release; fi
+  if grep -qiE 'data-placeholder|placeholder - not a real run' "$page"; then fail release "placeholder review remains"; else ok release; fi
 fi
 
 [ "$fails" -eq 0 ] && echo "all passed" || { echo "$fails failed"; exit 1; }

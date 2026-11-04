@@ -1,5 +1,6 @@
 // Layout, theme and accessibility checks for index.html.
 // Run: NODE_PATH=$(npm root -g) node tests/layout-test.mjs
+// CHROMIUM=/path/to/chrome overrides the browser binary.
 // Uses the playwright package; Chromium from CHROMIUM, /opt/pw-browsers, or Playwright's own install.
 import { createRequire } from 'node:module';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -50,14 +51,14 @@ async function palette(p) {
     const tok = (n) => probe('color', `var(--${n})`);
     return {
       paper: getComputedStyle(document.body).backgroundColor,
-      ink: tok('ink'), muted: tok('muted'), red: tok('red'), outline: tok('outline'),
-      link: getComputedStyle(document.querySelector('main a')).color,
+      ink: tok('ink'), muted: tok('muted'), accentInk: tok('accent-ink'), warn: tok('warn'), good: tok('good'), outline: tok('accent'),
+      link: getComputedStyle(document.querySelector('main p:not(.actions) a')).color,
       button: getComputedStyle(document.querySelector('[data-theme-toggle]')).color,
     };
   });
 }
 function assertContrast(pal, label) {
-  for (const k of ['ink', 'muted', 'red', 'link', 'button']) {
+  for (const k of ['ink', 'muted', 'accentInk', 'warn', 'good', 'link', 'button']) {
     const r = contrast(pal[k], pal.paper);
     assert.ok(r >= 4.5, `${label} ${k} ${r.toFixed(2)} < 4.5`);
   }
@@ -74,37 +75,65 @@ for (const width of [320, 375]) {
   });
 }
 
-await check('no verdict line wraps at 320px', async () => {
-  const { p, ctx } = await page({ viewport: { width: 320, height: 800 } });
-  const bad = await p.evaluate(() => {
-    const out = [];
-    for (const line of document.querySelectorAll('.verdict .line')) {
-      const lh = parseFloat(getComputedStyle(line).lineHeight);
-      if (line.getBoundingClientRect().height > lh * 1.5) out.push(line.textContent);
-    }
-    return out;
+for (const width of [320, 390]) {
+  await check(`hero verdict card content fits inside the card at ${width}px`, async () => {
+    const { p, ctx } = await page({ viewport: { width, height: 800 } });
+    const bad = await p.evaluate(() => {
+      const card = document.querySelector('.hero .verdict');
+      const box = card.getBoundingClientRect();
+      const out = [];
+      if (card.scrollWidth > card.clientWidth) out.push(`card scrollWidth ${card.scrollWidth} > ${card.clientWidth}`);
+      for (const el of card.querySelectorAll('*')) {
+        const r = el.getBoundingClientRect();
+        if (r.right > box.right + 0.5 || r.left < box.left - 0.5) out.push(`${el.tagName} ${el.textContent.trim().slice(0, 30)}`);
+      }
+      return out;
+    });
+    await ctx.close();
+    assert.deepEqual(bad, []);
+  });
+}
+
+await check('hero verdict card: verdict line, 1-3 finding rows, evidence, confirm line, review link', async () => {
+  const { p, ctx } = await page();
+  const c = await p.evaluate(() => {
+    const card = document.querySelector('.hero figure.verdict');
+    const rows = [...card.querySelectorAll('.vrows li')].map((li) => ({
+      chip: !!li.querySelector('.chip.sev'), rule: !!li.querySelector('code'), loc: /:\d+$/.test(li.querySelector('.loc')?.textContent || ''),
+    }));
+    return {
+      v: card.querySelector('.v')?.textContent, rows, text: card.textContent,
+      link: card.querySelector('a[href*="terraform-aws-vpc/pull/1270#pullrequestreview-"]') !== null,
+    };
   });
   await ctx.close();
-  assert.deepEqual(bad, []);
+  assert.equal(c.v, 'Changes requested before merge.');
+  assert.ok(c.rows.length >= 1 && c.rows.length <= 3, `${c.rows.length} rows`);
+  assert.ok(c.rows.every((r) => r.chip && r.rule && r.loc), 'each row has a severity chip, a rule ID and file:line');
+  assert.ok(c.text.includes('53 not verified'), 'behaviour evidence line');
+  assert.ok(c.text.includes('Posts nothing until you confirm.'), 'confirm line');
+  assert.ok(c.link, 'link to the posted review');
 });
 
-await check('verdict has at most 12 lines of at most 30 characters', async () => {
-  const { p, ctx } = await page();
-  const lines = await p.$$eval('.verdict .line', (ls) => ls.map((l) => l.textContent));
-  await ctx.close();
-  assert.ok(lines.length > 0 && lines.length <= 12, `${lines.length} lines`);
-  const long = lines.filter((l) => l.length > 30);
-  assert.deepEqual(long, []);
-});
-
-await check('hero CTAs and full verdict above the fold at 1280x800', async () => {
+await check('hero CTAs and the whole verdict card above the fold at 1280x800', async () => {
   const { p, ctx } = await page();
   const bottoms = await p.evaluate(() => [
-    ...[...document.querySelectorAll('[data-cta]')].map((a) => a.getBoundingClientRect().bottom),
-    document.querySelector('.verdict').getBoundingClientRect().bottom,
+    ...[...document.querySelectorAll('#hero [data-cta]')].map((a) => a.getBoundingClientRect().bottom),
+    document.querySelector('.hero .verdict').getBoundingClientRect().bottom,
   ]);
   await ctx.close();
+  assert.equal(bottoms.length, 3);
   assert.ok(bottoms.every((b) => b <= 800), `bottoms ${bottoms.map(Math.round)}`);
+});
+
+await check('nav links visible at 320px', async () => {
+  const { p, ctx } = await page({ viewport: { width: 320, height: 800 } });
+  const vis = await p.$$eval('header nav a', (as) => as.map((a) => {
+    const r = a.getBoundingClientRect();
+    return r.width > 0 && r.height > 0 && r.right <= window.innerWidth;
+  }));
+  await ctx.close();
+  assert.deepEqual(vis, [true, true, true]);
 });
 
 await check('contrast in light theme', async () => {
@@ -130,11 +159,14 @@ for (const scheme of ['light', 'dark']) {
     const { p, ctx } = await page({ colorScheme: scheme });
     const other = scheme === 'light' ? 'dark' : 'light';
     const btn = p.locator('[data-theme-toggle]');
-    assert.equal(await btn.textContent(), `Switch to ${other} theme`);
+    const cap = (t) => t[0].toUpperCase() + t.slice(1);
+    assert.equal(await btn.textContent(), cap(other));
+    assert.equal(await btn.getAttribute('aria-label'), `Switch to ${other} theme`);
     const before = await p.evaluate(() => getComputedStyle(document.body).backgroundColor);
     await btn.click({ timeout: 2000 });
     assert.equal(await p.evaluate(() => document.documentElement.dataset.theme), other);
-    assert.equal(await btn.textContent(), `Switch to ${scheme} theme`);
+    assert.equal(await btn.textContent(), cap(scheme));
+    assert.equal(await btn.getAttribute('aria-label'), `Switch to ${scheme} theme`);
     assert.notEqual(await p.evaluate(() => getComputedStyle(document.body).backgroundColor), before);
     await ctx.close();
   });
@@ -148,7 +180,8 @@ await check('toggle label updates when storage write throws', async () => {
   const p = await ctx.newPage();
   await p.goto(url);
   await p.click('[data-theme-toggle]', { timeout: 2000 });
-  assert.equal(await p.locator('[data-theme-toggle]').textContent(), 'Switch to light theme');
+  assert.equal(await p.locator('[data-theme-toggle]').textContent(), 'Light');
+  assert.equal(await p.locator('[data-theme-toggle]').getAttribute('aria-label'), 'Switch to light theme');
   await ctx.close();
 });
 
@@ -158,6 +191,8 @@ await check('target sizes: CTAs 44x44, other controls 24x24', async () => {
     const out = [];
     for (const el of document.querySelectorAll('a, button')) {
       if (el.offsetParent === null) continue;
+      // WCAG 2.5.8 inline exception: a link inside a sentence is sized by its line.
+      if (el.tagName === 'A' && getComputedStyle(el).display === 'inline' && el.closest('p, li, dd, td, figcaption')) continue;
       const r = el.getBoundingClientRect();
       const min = el.hasAttribute('data-cta') ? 44 : 24;
       if (r.width < min || r.height < min) out.push(`${el.textContent.trim().slice(0, 30)} ${Math.round(r.width)}x${Math.round(r.height)}`);
@@ -208,7 +243,7 @@ await check('semantics: one h1, landmarks, lang, title', async () => {
   await ctx.close();
   assert.equal(s.h1, 1);
   assert.equal(s.lang, 'en');
-  assert.equal(s.title, 'modules.tf - review Terraform modules');
+  assert.equal(s.title, 'modules.tf - review Terraform module pull requests against written rules');
   assert.ok(s.header && s.main && s.footer, 'landmarks');
 });
 
