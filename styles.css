@@ -180,6 +180,7 @@ pre code{background:none;padding:0;color:inherit}
 .faq dt{font-weight:700;font-size:1.1rem}.faq dd{margin:.35rem 0 0;color:var(--muted)}
 .foot-bar{max-width:var(--max);margin:0 auto;padding:2.5rem var(--gut) 4rem;color:var(--muted);font-size:.9rem}
 .foot-bar p{margin:0 0 .4rem}
+.foot-bar .theme{margin-top:.6rem}
 
 @media (max-width:60rem){
   .hero{grid-template-columns:minmax(0,1fr);min-height:0}
