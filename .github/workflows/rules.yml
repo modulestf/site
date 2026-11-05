@@ -1,0 +1,44 @@
+name: rules
+
+# Nightly: rebuild rules/index.html from modulestf/modulestf master and commit it when it
+# changed. A source the builder rejects (a rule without a summary, an unknown category)
+# fails the run and leaves the published page as it was.
+on:
+  schedule:
+    - cron: "23 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: rules
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      pages: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: modulestf/modulestf
+          path: .src
+          persist-credentials: false
+      - run: node scripts/build-rules.mjs .src
+      - run: bash tests/site-test.sh
+      - name: Commit and publish when the page changed
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git add rules/index.html
+          if git diff --cached --quiet; then echo "rules page unchanged"; exit 0; fi
+          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+            commit -q -m "chore: update the rules page from modulestf/modulestf $(git -C .src rev-parse --short HEAD)"
+          git push origin HEAD:master
+          # Ask for the Pages build here instead of relying on the push to start one.
+          gh api -X POST "repos/${GITHUB_REPOSITORY}/pages/builds" > /dev/null

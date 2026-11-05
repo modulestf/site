@@ -18,6 +18,7 @@ jobs:
           persist-credentials: false
       - run: bash tests/site-test.sh
       - run: bash tests/site-test-selftest.sh
+      - run: bash tests/rules-test.sh
 
   layout:
     runs-on: ubuntu-latest

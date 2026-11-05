@@ -133,7 +133,7 @@ await check('nav links visible at 320px', async () => {
     return r.width > 0 && r.height > 0 && r.right <= window.innerWidth;
   }));
   await ctx.close();
-  assert.deepEqual(vis, [true, true, true]);
+  assert.deepEqual(vis, [true, true, true, true]);
 });
 
 await check('contrast in light theme', async () => {
