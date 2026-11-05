@@ -38,7 +38,8 @@ plain=$(sed -E 's/<[^>]*>//g' "$page")
 for s in "${fixed[@]}"; do grep -qF -- "$s" <<<"$plain" || missing="$missing [$s]"; done
 # Check the visible h1 and lede elements themselves, not just the text somewhere on the page.
 grep -qF -- "<h1>${fixed[0]}</h1>" "$page" || missing="$missing [h1]"
-grep -qF -- "<p class=\"lede\">${fixed[1]}</p>" "$page" || missing="$missing [lede]"
+# The lede may carry links; compare its text.
+grep '<p class="lede">' "$page" | sed -E 's/<[^>]*>//g' | grep -qxF -- "${fixed[1]}" || missing="$missing [lede]"
 if [ -z "$missing" ]; then ok fixed-copy; else fail fixed-copy "$missing"; fi
 
 # hero-actions: exactly two data-cta links, no waitlist link inside hero

@@ -101,6 +101,9 @@ const toc = CATEGORIES.filter(([k]) => rules.some((r) => r.cat === k))
   .map(([k, t]) => `<a href="#${k}">${t} <span class="count">${rules.filter((r) => r.cat === k).length}</span></a>`).join('\n');
 const legend = Object.values(ENGINES).map(([n, d]) => `<li><strong>${n}:</strong> ${d}</li>`).join('\n');
 const short = commit.slice(0, 7);
+// The GitHub links with star counts (filled by main.js), copied from the home page header.
+const repos = readFileSync('index.html', 'utf8').match(/<div class="repos">[\s\S]*?<\/div>/)?.[0];
+if (!repos) die('index.html: no <div class="repos"> block to copy');
 const desc = `The ${rules.length} rules the modules.tf review checks a Terraform module pull request against, by category and severity.`;
 
 const html = `<!doctype html>
@@ -135,6 +138,7 @@ const html = `<!doctype html>
 <a href="./" aria-current="page">Rules</a>
 <a href="../#faq">FAQ</a>
 </nav>
+${repos}
 </header>
 
 <main id="main">
