@@ -30,7 +30,7 @@ if node scripts/build-rules.mjs "$tmp/src" "$tmp/out.html" > /dev/null; then
   rows=$(grep -c '<tr id=' <<<"$html")
   if [ "$rows" = 3 ] && grep -qF '<span class="chip sev critical">CRITICAL</span>' <<<"$html" &&
     grep -qF 'Not a finding' <<<"$html" && grep -qF '&amp; &lt;b&gt;' <<<"$html" &&
-    grep -qF '<code>compat.variable-removed</code>' <<<"$html" && ! grep -q 'id="structure"' <<<"$html"; then
+    grep -qF '<code>compat.variable-removed</code>' <<<"$html" && [ "$(grep -c data-stars= <<<"$html")" = 2 ] && ! grep -q 'id="structure"' <<<"$html"; then
     ok build
   else fail build "rows=$rows or markup wrong"; fi
 else fail build "builder exited non-zero"; fi

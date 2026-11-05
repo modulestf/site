@@ -32,7 +32,7 @@ expect_fail() {
 expect_fail hype-phrase banned-words "" 's#</main>#<p>A game changer that leverages AI to unlock powerful reviews.</p></main>#'
 expect_fail placeholder release --release 's#</main>#<p data-placeholder>Sample run.</p></main>#'
 expect_fail stray-illustrative illustrative "" 's#</main>#<div data-illustrative>Illustrative.</div><p>Illustrative numbers.</p></main>#'
-expect_fail lede-replaced fixed-copy "" 's#<p class="lede">[^<]*</p>#<p class="lede">Something else.</p>#'
+expect_fail lede-replaced fixed-copy "" 's#<p class="lede">.*</p>#<p class="lede">Something else.</p>#'
 expect_fail dead-anchor anchors "" 's#</main>#<a href="\#nowhere">x</a><span data-id="nowhere"></span></main>#'
 expect_fail extra-section sections "" 's#</main>#<section id="extra"></section></main>#'
 expect_fail at-mention at-mention "" 's#</main>#<p>Ask @modulestf.</p></main>#'
